@@ -1,14 +1,5 @@
 # Marktop
 
-A simple parser from modified Markdown to HTML.
+A simple parser from my own version of Markdown to HTML, made exclusively for my own articles.
 
-This project will in all likelihood be a single-use tool.
-
-## Possible future names
-
-- ~~markup (already is a word)~~
-- ~~Markdown (already exists)~~
-- Markstrange (sounds weird)
-- Markcharm (not bad actually)
-- **Marktop (this project!)**
-- Markbottom (sounds weird)
+This project currently has any plans to be made usable by anyone other than me and sits on GitHub just so I don't lose it.

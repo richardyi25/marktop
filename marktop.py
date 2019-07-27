@@ -38,8 +38,8 @@ body_start = """
 		<script type="text/x-mathjax-config">
 			MathJax.Hub.Config({
 				tex2jax: {
-					inlineMath: [['$','$'], ["\\(","\\)"]],
-					displayMath: [['$$','$$'], ["\\[","\\]"]],
+					inlineMath: [['$','$']],
+					displayMath: [['$$','$$']],
 				}
 			});
 		</script>
@@ -177,15 +177,20 @@ with open(input_filename, "r") as input_file:
 	while line_number < input_length:
 		line = input_lines[line_number].rstrip()
 
-		# Skip empty lines
-		if line == "":
-			line_number += 1
-			continue
-		
-		# Skip comment lines (starting with //)
-		if len(line) >= 2 and line[:2] == "//":
-			line_number += 1
-			continue
+		# Process text only if it's not code
+		if not code_flag:
+			# Skip empty lines
+			if line == "":
+				line_number += 1
+				continue
+
+			# Removing leading tabs
+			line = line.lstrip('\t')
+			
+			# Skip comment lines (starting with //)
+			if len(line) >= 2 and line[:2] == '//':
+				line_number += 1
+				continue
 
 		# Split into first word, and the rest, by space
 		tokens = line.split(" ", 1)
@@ -211,7 +216,7 @@ with open(input_filename, "r") as input_file:
 
 				elif first == "#block":
 					block_flag = True
-					current_block.append(rest)
+					current_block = [rest]
 
 				elif code_flag:
 					if first == "#end":
@@ -222,7 +227,7 @@ with open(input_filename, "r") as input_file:
 
 				elif first == "#code":
 					code_flag = True
-					current_code.append(rest)
+					current_code = [rest]
 
 				elif first == "#end":
 					section_flag = False
@@ -234,7 +239,7 @@ with open(input_filename, "r") as input_file:
 
 			elif first == "#section":
 				section_flag = True
-				current_section.append(rest)
+				current_section = [rest]
 
 			elif first == "#end":
 				main_flag = False
@@ -265,20 +270,21 @@ with open(input_filename, "r") as input_file:
 with open(output_filename, "w") as output_file:
 	output_file.write(body_start % site_title + '\n')
 
-	output_file.write(title_text % title + '\n')
+	output_file.write(title_text % title + '\n\n')
 
 	if len(latex_preamble) > 0:
-		output_file.write(make_preamble(latex_preamble) + '\n')
-	output_file.write(main_start + '\n')
+		output_file.write(make_preamble(latex_preamble) + '\n\n')
 
 	if do_warning:
-		output_file.write(warning_text + '\n')
+		output_file.write(warning_text + '\n\n')
 	
 	if do_toc:
-		output_file.write(make_toc(section_titles) + '\n')
+		output_file.write(make_toc(section_titles) + '\n\n')
+
+	output_file.write(main_start + '\n\n')
 
 	for section in sections:
-		output_file.write(section + '\n')
+		output_file.write(section + '\n\n')
 
 	output_file.write(main_end + '\n')
 	output_file.write(body_end)

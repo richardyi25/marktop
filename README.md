@@ -17,6 +17,8 @@ chmod +x marktop
 sudo mv marktop /usr/bin
 ```
 
+You must also include `style.css`, `prism.css`, and `prism.js` in your project folder.
+
 ## Usage
 
 ```

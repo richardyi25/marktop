@@ -34,7 +34,7 @@ body_start = """
 		<meta charset="UTF-8">
 		<title>%s</title>
 		<link rel="stylesheet" href="prism.css">
-		<link rel="stylesheet" href="../style.css">
+		<link rel="stylesheet" href="style.css">
 		<script type="text/x-mathjax-config">
 			MathJax.Hub.Config({
 				tex2jax: {

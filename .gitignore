@@ -1,8 +1,6 @@
 .*.swp
 marktop_old.py
 *.html
-*.css
 *.mt
-*.js
 *.log
 *.txt

@@ -2,10 +2,6 @@
 
 Marktop is a single-purpose "lightweight" parser that converts Marktop code to HTML code.
 
-In other words, it's a single 300-line Python file that parses some Markdown-like code to HTML just so I don't have to directly write the HTML for my website.
-
-The usage is currently extremely limited so there's no real point in using it right now unless you want your websites to look and be structured exactly like mine.
-
 ## Installation (Linux and similar)
 
 
@@ -45,4 +41,4 @@ For automatic Marktop on filesave, add
 autocmd BufWritePost *.mt silent !marktop %:r.mt %:r.html
 ```
 
-Marktop must be installed. This will automatically convert to `[filename].html` if you save while editing `[filename].mt`
+Marktop must be installed. This will automatically write Marktop output to `[filename].html` if you save while editing `[filename].mt`.

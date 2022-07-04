@@ -27,19 +27,23 @@ section_titles = []
 current_section = []
 current_block = []
 current_code = []
+current_latex = ""
 
 body_start = """
 <html lang="en">
 	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta charset="UTF-8">
 		<title>%s</title>
 		<link rel="stylesheet" href="prism.css">
-		<link rel="stylesheet" href="style.css">
+		<link rel="stylesheet" href="../style.css">
+		<link rel="stylesheet" href="local_style.css">
 		<script type="text/x-mathjax-config">
 			MathJax.Hub.Config({
 				tex2jax: {
 					inlineMath: [['$','$']],
 					displayMath: [['$$','$$']],
+					processEscapes: true
 				}
 			});
 		</script>
@@ -144,6 +148,9 @@ def make_part(part):
 	else:
 		return '\n\t\t\t\t\t<p>\n\t\t\t\t\t\t' + part + '\n\t\t\t\t\t</p>'
 
+def make_supersection(name):
+	return '\t\t\t<div class="part">' + name + '</div>'
+
 def make_section(section, which):
 	title = section[0]
 	parts = section[1:]
@@ -153,12 +160,24 @@ def make_section(section, which):
 def make_block(block):
 	title = block[0]
 	parts = block[1:]
+	parts = map(make_part, parts)
 	return block_start % title + '\n' + '\n'.join(parts) + '\n' + block_end
 
 def make_code(code):
 	title = code[0]
 	parts = code[1:]
-	return code_start % title + '\n'.join(parts) + code_end
+	parts_text = '\n'.join(parts)
+	escaped = ''
+	for ch in parts_text:
+		if ch == '<':
+			escaped += '&lt;'
+		elif ch == '>':
+			escaped += '&gt;'
+		elif ch == '&':
+			escaped += '&amp;'
+		else:
+			escaped += ch
+	return code_start % title + escaped + code_end
 
 # Parsing flags
 latex_preamble_flag = False
@@ -166,6 +185,7 @@ main_flag = False
 section_flag = False
 block_flag = False
 code_flag = False
+latex_flag = False
 
 # Parse Marktop file
 with open(input_filename, "r") as input_file:
@@ -207,6 +227,22 @@ with open(input_filename, "r") as input_file:
 
 		elif main_flag:
 			if section_flag:
+				if latex_flag:
+					if line.strip() == "$$":
+						latex_flag = False
+						line = current_latex + "$$"
+						#current_latex = ""
+					else:
+						current_latex += line
+						line_number += 1
+						continue
+				else:
+					if line.strip() == "$$":
+						latex_flag = True
+						current_latex = line
+						line_number += 1
+						continue
+
 				if block_flag:
 					if first == "#end":
 						block_flag = False
@@ -240,6 +276,9 @@ with open(input_filename, "r") as input_file:
 			elif first == "#section":
 				section_flag = True
 				current_section = [rest]
+
+			elif first == "#part":
+				sections.append(make_supersection(rest))
 
 			elif first == "#end":
 				main_flag = False
